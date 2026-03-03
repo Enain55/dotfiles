@@ -1,4 +1,3 @@
-#!/bin/bash
 # ── volume.sh ─────────────────────────────────────────────
 # Description: Shows current audio volume with ASCII bar + tooltip
 # Usage: Waybar `custom/volume` every 1s
@@ -17,28 +16,48 @@ sink=$(wpctl status | awk '/Sinks:/,/Sources:/' | grep '\*' | cut -d'.' -f2- | s
 
 # Icon logic
 if [ "$is_muted" = true ]; then
-  icon=""
+  icon="  "
   vol_int=0
 elif [ "$vol_int" -lt 50 ]; then
-  icon=""
+  icon="  "
 else
-  icon=""
+  icon="  "
 fi
 
-# ASCII bar
-filled=$((vol_int / 10))
-empty=$((10 - filled))
-bar=$(printf '█%.0s' $(seq 1 $filled))
-pad=$(printf '░%.0s' $(seq 1 $empty))
+# Fix the ASCII bar logic to handle 0% and 100% correctly
+if [ "$vol_int" -eq 0 ]; then
+  filled=0
+  empty=10
+elif [ "$vol_int" -eq 100 ]; then
+  filled=10
+  empty=0
+else
+  filled=$(( (vol_int + 5) / 10 ))
+  empty=$((10 - filled))
+fi
+
+# ASCII bar (safe version)
+bar=""
+pad=""
+
+if [ "$filled" -gt 0 ]; then
+  bar=$(printf '█%.0s' $(seq 1 $filled))
+fi
+
+if [ "$empty" -gt 0 ]; then
+  pad=$(printf '░%.0s' $(seq 1 $empty))
+fi
+
 ascii_bar="[$bar$pad]"
 
 # Color logic
+# Make sure fg is set properly, fallback to a default color if not
 if [ "$is_muted" = true ] || [ "$vol_int" -lt 10 ]; then
-  fg="#bf616a" # red
+  fg="#bf616a"  # red
 elif [ "$vol_int" -lt 50 ]; then
-  fg="#fab387" # orange
+  fg="#fab387"  # orange
 else
-  fg="#56b6c2" # cyan
+  fg="#56b6c2"  # cyan
 fi
 
 # Tooltip text
@@ -48,5 +67,5 @@ else
   tooltip="Audio: $vol_int%\nOutput: $sink"
 fi
 
-# Final JSON output
+# Final JSON output for Waybar
 echo "{\"text\":\"<span foreground='$fg'>$icon $ascii_bar $vol_int%</span>\",\"tooltip\":\"$tooltip\"}"
