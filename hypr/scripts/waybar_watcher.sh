@@ -1,10 +1,9 @@
-#!/bin/bash
 
 logfile="/tmp/waybar_watcher_loop_final.log"
 
 # Wallpapers
-wallpaper_with_window="/home/enainandreev/.config/hypr/wallpapers/black.png"
-wallpaper_without_window="/home/enainandreev/.config/hypr/wallpapers/bg_wallpaper.jpg"
+wallpaper_with_window="/home/enainandreev/.config/hypr/wallpapers/black_2.jpg"
+wallpaper_without_window="/home/enainandreev/.config/hypr/wallpapers/bg_wallpaper_2.jpg"
 
 current_wallpaper=""
 eww_visible=false
@@ -93,4 +92,3 @@ while true; do
 
     sleep 0.5
 done
-
