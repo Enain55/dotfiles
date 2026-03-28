@@ -1,16 +1,16 @@
 /* ──────────────────────────────────────────────────────────────────────────
-   °˖* ૮(  • ᴗ ｡)っ🍸  pewdiepie/archdaemon/dionysh  shhheersh
+   °˖*  ૮(  • ᴗ ｡)っ🍸  pewdiepie/archdaemon/dionysh  shhheersh
    Waybar CSS styling
    vers. 1.0
    ────────────────────────────────────────────────────────────────────────── */
 
 /* === Base Waybar Styling ================================================= */
 
-waybar * {
+* {
   border: 4px;
   border-radius: 4px;
   min-height: 0;
-  font-family: "JetBrainsMonoNL Nerd Font Mono";
+  font-family: "GohuFont Nerd Font", "GohuFont uni-11", monospace;
   font-size: 14px;
 }
 
@@ -75,7 +75,8 @@ window#waybar {
 #pulseaudio,
 #backlight,
 #clock,
-#tray {
+#tray,
+#custom-vpn {
   padding: 6px 12px;
   margin: 6px 6px;
   background-color: #292d35;
@@ -126,8 +127,29 @@ window#waybar {
 #custom-asus-profile {
   font-weight: bold;
   font-size: 12px;
-  color: #e5c07b;
+  padding-left: 16px;
+  padding-right: 16px;
+  animation: glowPulse 3s infinite alternate;  /* Slower animation */
 }
+
+/* Glow effect using color from span foreground */
+#custom-asus-profile span {
+  animation: glowPulse 3s infinite alternate;
+}
+
+/* Pulsing and glowing animation */
+@keyframes glowPulse {
+  0% {
+    box-shadow: 0 0 6px rgba(229, 192, 123, 0.2);  /* Softer glow */
+    text-shadow: 0 0 6px rgba(229, 192, 123, 0.2);
+  }
+
+  100% {
+    box-shadow: 0 0 10px #56b6c2;  /* Softer glow */
+    text-shadow: 0 0 10px #56b6c2;
+  }
+}
+
 
 /* === Battery ============================================================= */
 
@@ -229,4 +251,3 @@ tooltip {
 tooltip label {
   color: #78bec7;
 }
-
