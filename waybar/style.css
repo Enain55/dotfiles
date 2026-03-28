@@ -127,7 +127,7 @@ window#waybar {
   font-size: 12px;
   padding-left: 16px;
   padding-right: 16px;
-  border: 2px solid;
+  border: 2px solid; /* Колір буде залежати від класу */
   transition: all 0.5s ease;
 }
 
@@ -137,7 +137,6 @@ window#waybar {
   animation: glowRed 3s infinite alternate ease-in-out;
 }
 
-/* --- РЕЖИМ STABILIZATION (Balanced) --- */
 #custom-asus-profile.balanced {
   color: #fab387;
   border-color: #fab387;
