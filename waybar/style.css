@@ -122,38 +122,34 @@ window#waybar {
 }
 
 
-/* Базовий стиль модуля */
 #custom-asus-profile {
   font-weight: bold;
   font-size: 12px;
   padding-left: 16px;
   padding-right: 16px;
-  border: 2px solid; /* Колір буде залежати від класу */
+  border: 2px solid;
   transition: all 0.5s ease;
 }
 
-/* --- РЕЖИМ RAZGON (Performance) --- */
 #custom-asus-profile.performance {
-  color: #bf616a; /* Твій червоний */
+  color: #bf616a;
   border-color: #bf616a;
   animation: glowRed 3s infinite alternate ease-in-out;
 }
 
 /* --- РЕЖИМ STABILIZATION (Balanced) --- */
 #custom-asus-profile.balanced {
-  color: #fab387; /* Твій помаранчевий */
+  color: #fab387;
   border-color: #fab387;
   animation: glowOrange 3s infinite alternate ease-in-out;
 }
 
-/* --- РЕЖИМ REACTOR SLEEP (Quiet) --- */
 #custom-asus-profile.quiet {
-  color: #56b6c2; /* Твій блакитний */
+  color: #56b6c2;
   border-color: #56b6c2;
   animation: glowBlue 3s infinite alternate ease-in-out;
 }
 
-/* Анімації пульсації для кожного кольору */
 @keyframes glowRed {
   from { box-shadow: 0 0 4px rgba(191, 97, 106, 0.2); }
   to { box-shadow: 0 0 12px rgba(191, 97, 106, 0.8); }
@@ -177,7 +173,7 @@ window#waybar {
   font-weight: normal;
 }
 
-/* 🔴 Critical */
+/* Critical */
 #custom-battery .battery-critical {
   background-color: #bf616a;
   color: white;
@@ -186,7 +182,7 @@ window#waybar {
   font-weight: bold;
 }
 
-/* 🟠 Warning */
+/* Warning */
 #custom-battery .battery-warning {
   background-color: #fab387;
   color: #2e3440;
@@ -194,7 +190,7 @@ window#waybar {
   border-radius: 6px;
 }
 
-/* 🟢 Normal */
+/* Normal */
 #custom-battery .battery-normal {
   color: #ffffff;
 }
