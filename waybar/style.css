@@ -122,32 +122,51 @@ window#waybar {
 }
 
 
-/* === Asus Profile ======================================================== */
-
+/* Базовий стиль модуля */
 #custom-asus-profile {
   font-weight: bold;
   font-size: 12px;
   padding-left: 16px;
   padding-right: 16px;
-  animation: glowPulse 3s infinite alternate;  /* Slower animation */
+  border: 2px solid; /* Колір буде залежати від класу */
+  transition: all 0.5s ease;
 }
 
-/* Glow effect using color from span foreground */
-#custom-asus-profile span {
-  animation: glowPulse 3s infinite alternate;
+/* --- РЕЖИМ RAZGON (Performance) --- */
+#custom-asus-profile.performance {
+  color: #bf616a; /* Твій червоний */
+  border-color: #bf616a;
+  animation: glowRed 3s infinite alternate ease-in-out;
 }
 
-/* Pulsing and glowing animation */
-@keyframes glowPulse {
-  0% {
-    box-shadow: 0 0 6px rgba(229, 192, 123, 0.2);  /* Softer glow */
-    text-shadow: 0 0 6px rgba(229, 192, 123, 0.2);
-  }
+/* --- РЕЖИМ STABILIZATION (Balanced) --- */
+#custom-asus-profile.balanced {
+  color: #fab387; /* Твій помаранчевий */
+  border-color: #fab387;
+  animation: glowOrange 3s infinite alternate ease-in-out;
+}
 
-  100% {
-    box-shadow: 0 0 10px #56b6c2;  /* Softer glow */
-    text-shadow: 0 0 10px #56b6c2;
-  }
+/* --- РЕЖИМ REACTOR SLEEP (Quiet) --- */
+#custom-asus-profile.quiet {
+  color: #56b6c2; /* Твій блакитний */
+  border-color: #56b6c2;
+  animation: glowBlue 3s infinite alternate ease-in-out;
+}
+
+/* Анімації пульсації для кожного кольору */
+@keyframes glowRed {
+  from { box-shadow: 0 0 4px rgba(191, 97, 106, 0.2); }
+  to { box-shadow: 0 0 12px rgba(191, 97, 106, 0.8); }
+}
+
+@keyframes glowOrange {
+  from { box-shadow: 0 0 4px rgba(250, 179, 135, 0.2); }
+  to { box-shadow: 0 0 12px rgba(250, 179, 135, 0.7); }
+}
+
+@keyframes glowBlue {
+  from { box-shadow: 0 0 4px rgba(86, 182, 194, 0.2); }
+  to { box-shadow: 0 0 12px rgba(86, 182, 194, 0.6); }
 }
 
 

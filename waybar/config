@@ -80,14 +80,13 @@
 
   // ── Asus Profile ─────────────────────────────────────────────────
   "custom/asus-profile": {
-    "exec": "~/.config/waybar/scripts/asus-profile.sh",
-    "interval": 3,
-    "format": "{}",
-    "tooltip": true,
-    "tooltip-format": "Toggle ASUS profile",
-    "on-click": "/home/enainandreev/.config/cycle-profile.sh"
+      "exec": "~/.config/waybar/scripts/asus-profile.sh", // шлях до твого скрипта
+      "return-type": "json",
+      "interval": "once",
+      "exec-on-event": true,
+      "on-click": "pkill -RTMIN+8 waybar", 
+      "signal": 8
   },
-
 
   // ── Battery (scripted + built-in) ────────────────────────────────
   "custom/battery": {

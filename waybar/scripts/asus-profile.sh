@@ -1,30 +1,35 @@
 #!/bin/bash
-# ── asus-profile.sh ───────────────────────────────────────  
-# Description: Display current ASUS power profile with color
-# Usage: Called by Waybar `custom/asus-profile`
-# Dependencies: asusctl, awk
-# ──────────────────────────────────────────────────────────  
 
-profile=$(asusctl profile get | awk '/Active profile/ {print $NF}')
+# Отримуємо поточний профіль
+current=$(asusctl profile get | awk '/Active profile/ {print $NF}')
 
-case "$profile" in
+# Визначаємо параметри залежно від профілю
+case "$current" in
   Performance)
+    next="Balanced"
     text="RAZGON"
-    fg="#bf616a"
+    class="performance"
     ;;
   Balanced)
+    next="Quiet"
     text="STABILIZATION"
-    fg="#fab387"
+    class="balanced"
     ;;
   Quiet)
+    next="Performance"
     text="REACTOR SLEEP"
-    fg="#56b6c2"
+    class="quiet"
     ;;
   *)
+    next="Balanced"
     text="ASUS ??"
-    fg="#ffffff"
+    class="unknown"
     ;;
 esac
 
-echo "<span foreground='$fg'>$text</span>"
+# Перемикаємо профіль (якщо скрипт викликається для зміни)
+# Якщо цей скрипт просто для відображення, цю строку можна прибрати
+asusctl profile set "$next" > /dev/null 2>&1
 
+# ВИВІД У ФОРМАТІ JSON (Критично для класів)
+echo "{\"text\": \"$text\", \"class\": \"$class\"}"
