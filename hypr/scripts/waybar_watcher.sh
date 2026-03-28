@@ -2,78 +2,81 @@
 
 logfile="/tmp/waybar_watcher_final.log"
 
-# Настройки
-off_delay=8     # ~3 сек тишины перед выключением
-on_delay=3      # ~1.2 сек стабильности перед включением
+# Настройки (в итерациях цикла)
+off_delay=4     
+on_delay=2      
 check_speed=0.4 
 
 empty_count=0 
 stable_count=0
 last_workspace=""
+# Состояние: 0 - пустой стол, 1 - окна есть
+current_mode=-1 
 
 wallpaper_with_window="/home/enainandreev/.config/hypr/wallpapers/black_2.jpg"
 wallpaper_without_window="/home/enainandreev/.config/hypr/wallpapers/bg_wallpaper_2.jpg"
 
-current_wallpaper=""
+# Получаем имя монитора (берем первый активный)
 monitor=$(hyprctl monitors -j | jq -r '.[0].name')
 
-hyprctl hyprpaper preload "$wallpaper_with_window"
-hyprctl hyprpaper preload "$wallpaper_without_window"
+# Предзагрузка обоев (обязательно!)
+hyprctl hyprpaper preload "$wallpaper_with_window" >/dev/null 2>&1
+hyprctl hyprpaper preload "$wallpaper_without_window" >/dev/null 2>&1
 
 while true; do
-    # Берем данные один раз
-    hypr_data=$(hyprctl activeworkspace -j)
-    active_ws=$(echo "$hypr_data" | jq -r '.id')
-    window_count=$(hyprctl clients -j | jq "[.[] | select(.workspace.id == $active_ws and .mapped == true)] | length")
+    # 1. Получаем данные одним вызовом
+    ws_data=$(hyprctl activeworkspace -j)
+    active_ws=$(echo "$ws_data" | jq -r '.id')
+    window_count=$(echo "$ws_data" | jq -r '.windows')
 
+    # Сброс при переключении стола
     if [ "$active_ws" != "$last_workspace" ]; then
         last_workspace="$active_ws"
         stable_count=0
         empty_count=0
-        # Не делаем НИЧЕГО, пока пользователь не остановится
-        sleep $check_speed
-        continue
     fi
 
+    # 2. Логика определения состояния
     if [ "$window_count" -gt 0 ]; then
         empty_count=0
         ((stable_count++))
-
-        if [ "$stable_count" -ge "$on_delay" ]; then
+        
+        # Если окна стабильно открыты и мы еще не в "активном" режиме
+        if [ "$stable_count" -ge "$on_delay" ] && [ "$current_mode" -ne 1 ]; then
             
+            # Действия для ВКЛЮЧЕНИЯ
+            pkill -x conky >/dev/null 2>&1
             if ! pgrep -x "waybar" > /dev/null; then
-                pkill -x conky
-                nohup waybar >/dev/null 2>&1 &
+                waybar >/dev/null 2>&1 &
             fi
-            if [ "$current_wallpaper" != "$wallpaper_with_window" ]; then
-                echo "Switching to WITH_WINDOW wallpaper" >> "$logfile"
-                hyprctl hyprpaper wallpaper "$monitor,$wallpaper_with_window"
-                current_wallpaper="$wallpaper_with_window"
-            fi
+            
+            # Смена обоев (только если нужно)
+            hyprctl hyprpaper wallpaper "$monitor,$wallpaper_with_window" >/dev/null 2>&1
+            
+            current_mode=1
+            echo "$(date): Mode -> ACTIVE (Windows detected)" >> "$logfile"
         fi
-
     else
         stable_count=0
         ((empty_count++))
 
-        if [ "$empty_count" -ge "$off_delay" ]; then
+        # Если стол стабильно пуст и мы еще не в "пустом" режиме
+        if [ "$empty_count" -ge "$off_delay" ] && [ "$current_mode" -ne 0 ]; then
             
-            # 1. Waybar & Conky
-            if pgrep -x "waybar" > /dev/null; then
-                pkill -x waybar
-            fi
-
+            # Действия для ВЫКЛЮЧЕНИЯ
+            pkill -9 -x waybar >/dev/null 2>&1
+            
             if ! pgrep -x "conky" > /dev/null; then
-                conky --daemonize --pause=1 &
+                conky --daemonize --pause=1 >/dev/null 2>&1
             fi
 
-            if [ "$current_wallpaper" != "$wallpaper_without_window" ]; then
-                echo "Switching to WITHOUT_WINDOW wallpaper" >> "$logfile"
-                hyprctl hyprpaper wallpaper "$monitor,$wallpaper_without_window"
-                current_wallpaper="$wallpaper_without_window"
-            fi
+            # Смена обоев (только если нужно)
+            hyprctl hyprpaper wallpaper "$monitor,$wallpaper_without_window" >/dev/null 2>&1
+            
+            current_mode=0
+            echo "$(date): Mode -> EMPTY (Desktop clear)" >> "$logfile"
         fi
     fi
 
-    sleep $check_speed
+    sleep "$check_speed"
 done
